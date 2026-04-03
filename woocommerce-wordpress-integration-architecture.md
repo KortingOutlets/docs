@@ -12,7 +12,7 @@ Scope:
 flowchart LR
     subgraph KORTING["Korting Systems"]
         INTERNAL["Internal Korting systems<br/>(black box)"]
-        GROCERY["Grocery API<br/>api/woo/*"]
+        GROCERY["Store API<br/>api/woo/*"]
         OUTLET["KortingOutlet Backend API<br/>Order endpoint"]
     end
 
@@ -26,7 +26,7 @@ flowchart LR
         WPR["WordPress REST APIs<br/>(custom/content endpoints)"]
     end
 
-    INTERNAL -->|"Publishes product/catalog data via Grocery API"| GROCERY
+    INTERNAL -->|"Publishes product/catalog data via Store API"| GROCERY
 
     GROCERY -->|"Create/update/delete WooCommerce products and inventory<br/>Examples: /wp-json/wc/v3/products<br/>/wp-json/wc/v3/products/batch"| WC
     GROCERY -->|"Create WooCommerce categories and tags as needed<br/>Examples: /wp-json/wc/v3/products/categories<br/>/wp-json/wc/v3/products/tags"| WC
@@ -46,10 +46,10 @@ flowchart LR
 
 These are the current ways Korting pushes data into the website platform:
 
-1. Grocery product publishing into WooCommerce product APIs.
-2. Grocery category creation into WooCommerce category APIs.
-3. Grocery tag creation into WooCommerce tag APIs.
-4. Grocery store-product publishing into WordPress custom post endpoints.
+1. Store API product publishing into WooCommerce product APIs.
+2. Store API category creation into WooCommerce category APIs.
+3. Store API tag creation into WooCommerce tag APIs.
+4. Store API store-product publishing into WordPress custom post endpoints.
 5. Order update / refund calls from Korting into WooCommerce when needed.
 
 ### Website Outbound to Korting
@@ -62,10 +62,10 @@ These are the current ways the website sends requests to Korting services:
 
 These are the current ways the website receives data from Korting-owned services:
 
-1. WordPress pulls category tags through AWS API Gateway, which fronts the Grocery API endpoint `GET /api/woo/category/tags?categoryId={id}`.
+1. WordPress pulls category tags through AWS API Gateway, which fronts the Store API endpoint `GET /api/woo/category/tags?categoryId={id}`.
 
 ## Notes for the Incoming Vendor
 
 - Korting internal item sourcing, pricing, inventory calculations, and other downstream logic are intentionally out of scope for this diagram.
 - The website should treat Korting-owned APIs as the system of integration for outbound order submission and inbound category-to-tag lookup.
-- Current website-facing publishing from Korting is centered in the Grocery API and uses both WooCommerce REST APIs and WordPress REST APIs.
+- Current website-facing publishing from Korting is centered in the Store API and uses both WooCommerce REST APIs and WordPress REST APIs.
