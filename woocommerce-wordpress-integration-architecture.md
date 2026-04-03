@@ -11,9 +11,11 @@ Scope:
 ```mermaid
 flowchart LR
     subgraph KORTING["Korting Systems"]
+        direction TB
+        OUTLET["KortingOutlet Backend API<br/>Order endpoint"]
         INTERNAL["Internal Korting systems<br/>(black box)"]
         GROCERY["Store API<br/>api/woo/*"]
-        OUTLET["KortingOutlet Backend API<br/>Order endpoint"]
+        INTERNAL ~~~ GROCERY
     end
 
     subgraph AWS["AWS"]
@@ -27,11 +29,13 @@ flowchart LR
     end
 
     INTERNAL -->|"Publishes product/catalog data via Store API"| GROCERY
+    OUTLET -->|"Pull order details by orderId"| GROCERY
 
     GROCERY -->|"Create/update/delete WooCommerce products and inventory<br/>Examples: /wp-json/wc/v3/products<br/>/wp-json/wc/v3/products/batch"| WC
     GROCERY -->|"Create WooCommerce categories and tags as needed<br/>Examples: /wp-json/wc/v3/products/categories<br/>/wp-json/wc/v3/products/tags"| WC
     GROCERY -->|"Publish store-product content"| WPR
     GROCERY -->|"Update WooCommerce orders / submit refunds when initiated by Korting<br/>Examples: /wp-json/wc/v3/orders/{id}<br/>/wp-json/emberly/v1/refund-line"| WC
+    WC -->|"Order detail lookup"| GROCERY
 
     WP -->|"Current outbound integration 1:<br/>website order traffic"| APIGW
     APIGW -->|"Forwarded to KortingOutlet Backend API<br/>Order endpoint"| OUTLET
@@ -51,6 +55,13 @@ These are the current ways Korting pushes data into the website platform:
 3. Store API tag creation into WooCommerce tag APIs.
 4. Store API store-product publishing into WordPress custom post endpoints.
 5. Order update / refund calls from Korting into WooCommerce when needed.
+
+### Internal Korting Order Detail Flow
+
+These are the current internal order-related integration dependencies:
+
+1. KortingOutlet Backend API pulls order details by `orderId` from the Store API.
+2. Store API pulls order details from WooCommerce REST APIs.
 
 ### Website Outbound to Korting
 
